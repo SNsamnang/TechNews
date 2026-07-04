@@ -13,7 +13,17 @@ class ListPosts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label("បង្កើតអត្ថបទថ្មី"),
         ];
     }
+    public function getTitle(): string
+    {
+        return 'បញ្ជីអត្ថបទ';
+    }
+    public function getBreadcrumb(): ?string
+    {
+        return 'បញ្ជី';
+    }
+    
 }

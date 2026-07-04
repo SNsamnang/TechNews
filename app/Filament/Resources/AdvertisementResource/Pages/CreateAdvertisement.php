@@ -1,35 +1,30 @@
 <?php
 
-namespace App\Filament\Resources\PostResource\Pages;
+namespace App\Filament\Resources\AdvertisementResource\Pages;
 
-use App\Filament\Resources\PostResource;
+use App\Filament\Resources\AdvertisementResource;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
-class CreatePost extends CreateRecord
+class CreateAdvertisement extends CreateRecord
 {
-    protected static string $resource = PostResource::class;
+    protected static string $resource = AdvertisementResource::class;
     protected static ?string $breadcrumb = 'បង្កើត';
 
-    // ✅ Auto-set user_id to logged-in admin
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['user_id'] = auth()->id();
-        return $data;
-    }
 
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
     }
-    public function getTitle(): string
+     public function getTitle(): string
     {
-        return 'បញ្ជីបង្កើតអត្ថបទថ្មី';
+        return 'បង្កើតអ្នកឧបត្ថម្ភថ្មី';
     }
-    protected function getCreatedNotificationTitle(): ?string
+         protected function getCreatedNotificationTitle(): ?string
     {
         return 'បានបង្កើតដោយជោគជ័យ';
     }
-    protected function getCreateFormAction(): \Filament\Actions\Action
+        protected function getCreateFormAction(): \Filament\Actions\Action
     {
         return parent::getCreateFormAction()
             ->label('រក្សាទុក');

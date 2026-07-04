@@ -9,4 +9,26 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateCategory extends CreateRecord
 {
     protected static string $resource = CategoryResource::class;
+    protected static ?string $breadcrumb = 'បង្កើត';
+
+    public function getTitle(): string
+    {
+        return 'បង្កើតប្រភេទអត្ថបទថ្មី';
+    }
+    protected function getCreatedNotificationTitle(): ?string
+    {
+        return 'បានបង្កើតដោយជោគជ័យ';
+    }
+
+    protected function getCreateFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCreateFormAction()
+            ->label('រក្សាទុក');
+    }
+    protected function getCancelFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCancelFormAction()
+            ->label('បោះបង់')
+            ->color('danger');
+    }
 }
