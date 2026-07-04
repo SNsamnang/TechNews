@@ -16,6 +16,7 @@ class Post extends Model
         'excerpt',
         'body',
         'thumbnail',
+        'media_type',
         'category_id',
         'user_id',
         'is_published',
@@ -28,6 +29,10 @@ class Post extends Model
         'is_published' => 'boolean',
         'is_featured'  => 'boolean',
         'published_at' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+    protected $appends = [
+        'thumbnail_url',
     ];
 
     // Auto-generate slug from title
@@ -80,9 +85,10 @@ class Post extends Model
     // Thumbnail URL accessor
     public function getThumbnailUrlAttribute()
     {
-        if ($this->thumbnail) {
-            return asset('storage/' . $this->thumbnail);
+        if (!$this->thumbnail) {
+            return null;
         }
-        return asset('images/placeholder.jpg');
+
+        return asset('storage/' . $this->thumbnail);
     }
 }

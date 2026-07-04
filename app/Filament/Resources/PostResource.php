@@ -16,17 +16,19 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
-    protected static ?string $navigationGroup = 'Content';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationLabel = 'អត្ថបទ';
+    protected static ?string $breadcrumb = 'អត្ថបទ';
+    protected static ?string $modelLabel = 'អត្ថបទ';
 
     public static function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Post Content')
+            Forms\Components\Section::make('បង្កើតថ្មី')
                 ->schema([
                     Forms\Components\TextInput::make('title')
+                        ->label('ចំណងជើង')
                         ->required()
-                        ->maxLength(255)
+                        ->maxLength(250)
                         ->live(onBlur: true)
                         ->afterStateUpdated(function (string $state, callable $set) {
                             $set('slug', Str::slug($state));
@@ -38,11 +40,13 @@ class PostResource extends Resource
                         ->maxLength(255),
 
                     Forms\Components\Textarea::make('excerpt')
+                        ->label('ដកស្រង់')
                         ->rows(3)
                         ->maxLength(500)
                         ->columnSpanFull(),
 
                     Forms\Components\RichEditor::make('body')
+                        ->label('សេចក្ដីសង្ខេប')
                         ->required()
                         ->toolbarButtons([
                             'attachFiles',
@@ -62,25 +66,53 @@ class PostResource extends Resource
                         ])
                         ->columnSpanFull(),
                 ])->columns(2),
-
             Forms\Components\Section::make('Media & Taxonomy')
                 ->schema([
-                    Forms\Components\FileUpload::make('thumbnail')
-                        ->image()
-                        ->directory('thumbnails')
-                        ->imageResizeMode('cover')
-                        ->imageCropAspectRatio('16:9')
-                        ->imageResizeTargetWidth('1280')
-                        ->imageResizeTargetHeight('720')
-                        ->columnSpanFull(),
+                    Forms\Components\Select::make('media_type')
+                        ->label('ប្រភេទអត្ថបទ')
+                        ->options([
+                            'image' => 'Image',
+                            'video_upload' => 'Upload Video',
+                        ])
+                        ->default('image')
+                        ->live()
+                        ->required(),
 
+                    Forms\Components\FileUpload::make('thumbnail')
+                        ->label('រូបភាព / វីដេអូ')
+                        ->directory('ads')
+                        ->visible(
+                            fn($get) =>
+                            in_array(
+                                $get('media_type'),
+                                ['image', 'video_upload']
+                            )
+                        )
+                        ->required(
+                            fn($get) =>
+                            in_array(
+                                $get('media_type'),
+                                ['image', 'video_upload']
+                            )
+                        )
+                        ->acceptedFileTypes([
+                            'image/jpeg',
+                            'image/png',
+                            'image/webp',
+                            'video/mp4',
+                            'video/webm',
+                            'video/ogg',
+                            'video/mov',
+                        ]),
                     Forms\Components\Select::make('category_id')
+                        ->label('ប្រភេទអត្ថបទ')
                         ->relationship('category', 'name')
                         ->searchable()
                         ->preload()
                         ->required(),
 
                     Forms\Components\Select::make('tags')
+                        ->label('ស្លាក')
                         ->relationship('tags', 'name')
                         ->multiple()
                         ->searchable()
@@ -96,20 +128,23 @@ class PostResource extends Resource
             Forms\Components\Section::make('Publishing')
                 ->schema([
                     Forms\Components\Toggle::make('is_published')
-                        ->label('Published')
+                        ->label('បង្ហោះអត្ថបទ')
                         ->live()
                         ->afterStateUpdated(function ($state, callable $set) {
                             if ($state) $set('published_at', now());
                         }),
 
                     Forms\Components\Toggle::make('is_featured')
-                        ->label('Featured (Homepage Hero)'),
+                        ->label('បញ្ចូលជាអត្ថបទជាស្លាយ'),
 
                     Forms\Components\Toggle::make('is_breaking')
-                        ->label('Breaking News Ticker'),
+                        ->label('បញ្ចូលជាព័តមានថ្មីៗ'),
 
                     Forms\Components\DateTimePicker::make('published_at')
-                        ->label('Published At')
+                        ->label('កាលបរិច្ឆេទ និងម៉ោង')
+                        ->locale('km')
+                        ->native(false)
+                        ->displayFormat('d/m/Y h:i A')
                         ->nullable(),
                 ])->columns(3),
         ]);
@@ -119,50 +154,89 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail')
-                    ->width(80)->height(50),
+                Tables\Columns\ViewColumn::make('thumbnail')
+                    ->label('រូបភាព')
+                    ->view('filament.columns.media-preview'),
+                Tables\Columns\TextColumn::make('media_type')
+                    ->label('មេឌៀ')
+                    ->badge()
+                    ->formatStateUsing(function ($state) {
+                        return $state === 'video_upload'
+                            ? '🎥 វីដេអូ'
+                            : '🖼️ រូបភាព';
+                    })
+                    ->color(function ($state) {
+                        return $state === 'video_upload'
+                            ? 'success'
+                            : 'primary';
+                    }),
 
                 Tables\Columns\TextColumn::make('title')
+                    ->label('ចំណងជើង')
                     ->searchable()
                     ->sortable()
-                    ->limit(50)
+                    ->limit(60)
                     ->wrap(),
 
                 Tables\Columns\TextColumn::make('category.name')
+                    ->label('ប្រភេទអត្ថបទ')
                     ->badge()
                     ->color('primary')
                     ->sortable(),
 
                 Tables\Columns\IconColumn::make('is_published')
-                    ->label('Published')
+                    ->label('បោះពុម្ព')
                     ->boolean(),
 
                 Tables\Columns\TextColumn::make('views')
+                    ->label('ចំនួនមើល')
+                    ->width(10)
                     ->sortable()
                     ->numeric(),
 
-                Tables\Columns\TextColumn::make('published_at')
-                    ->dateTime('M d, Y')
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('is_published')
+                    ->label('ស្ថានភាព')
+                    ->badge()
+                    ->formatStateUsing(fn($state) => $state ? 'បានបង្ហោះ' : 'សេចក្ដីព្រាង')
+                    ->color(fn($state) => $state ? 'success' : 'red')
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('category')
                     ->relationship('category', 'name'),
-                Tables\Filters\TernaryFilter::make('is_published')
-                    ->label('Published'),
-                Tables\Filters\TernaryFilter::make('is_featured')
-                    ->label('Featured'),
+
+                Tables\Filters\TernaryFilter::make('is_published'),
             ])
+            // ->actions([
+            //     Tables\Actions\EditAction::make(),
+            //     // ✅ DeleteAction only on existing records (in table row)
+            //     Tables\Actions\DeleteAction::make()
+            //         ->requiresConfirmation(),
+            // ])nth
             ->actions([
-                Tables\Actions\EditAction::make(),
-                // ✅ DeleteAction only on existing records (in table row)
-                Tables\Actions\DeleteAction::make()
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil-square')
+                    ->color('warning')
+                    ->button()
+                    ->label('កែសម្រួល')
                     ->requiresConfirmation(),
+
+                Tables\Actions\DeleteAction::make()
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->label('លុប')
+                    ->button()
+                    ->requiresConfirmation()
+                    ->modalHeading('បញ្ជាក់ការលុប')
+                    ->modalDescription('តើអ្នកពិតជាចង់លុបអត្ថបទនេះមែនទេ?')
+                    ->modalSubmitActionLabel('លុប')
+                    ->modalCancelActionLabel('បោះបង់')
+                    ->successNotificationTitle('លុបដោយជោគជ័យ'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
                 ]),
+
             ])
             ->defaultSort('created_at', 'desc');
     }
@@ -179,5 +253,9 @@ class PostResource extends Resource
             'create' => Pages\CreatePost::route('/create'),
             'edit'   => Pages\EditPost::route('/{record}/edit'),
         ];
+    }
+    public static function getNavigationLabel(): string
+    {
+        return 'អត្ថបទ';
     }
 }

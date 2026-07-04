@@ -13,12 +13,16 @@ class PostController extends Controller
     {
         $posts = Post::with(['category', 'user'])
             ->published()
-            ->when($request->category, fn($q) =>
+            ->when(
+                $request->category,
+                fn($q) =>
                 $q->whereHas('category', fn($q2) => $q2->where('slug', $request->category))
             )
-            ->when($request->search, fn($q) =>
+            ->when(
+                $request->search,
+                fn($q) =>
                 $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('excerpt', 'like', '%' . $request->search . '%')
+                    ->orWhere('excerpt', 'like', '%' . $request->search . '%')
             )
             ->latest('published_at')
             ->paginate($request->per_page ?? 12);
@@ -114,17 +118,23 @@ class PostController extends Controller
             'title'          => $post->title,
             'slug'           => $post->slug,
             'excerpt'        => $post->excerpt,
-            'thumbnail_url'  => $post->thumbnail_url,
+
+            'media_type' => $post->media_type,
+            'thumbnail_url' => $post->thumbnail_url,
+
             'views'          => $post->views,
             'is_featured'    => $post->is_featured,
+
             'published_at'   => $post->published_at?->format('Y-m-d H:i:s'),
             'published_ago'  => $post->published_at?->diffForHumans(),
+
             'category'       => $post->category ? [
                 'id'    => $post->category->id,
                 'name'  => $post->category->name,
                 'slug'  => $post->category->slug,
                 'color' => $post->category->color,
             ] : null,
+
             'author'         => $post->user ? [
                 'id'   => $post->user->id,
                 'name' => $post->user->name,
@@ -133,7 +143,10 @@ class PostController extends Controller
 
         if ($full) {
             $data['body'] = $post->body;
-            $data['tags'] = $post->tags->map(fn($t) => ['name' => $t->name, 'slug' => $t->slug]);
+            $data['tags'] = $post->tags->map(fn($t) => [
+                'name' => $t->name,
+                'slug' => $t->slug,
+            ]);
         }
 
         return $data;

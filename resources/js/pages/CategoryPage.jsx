@@ -37,7 +37,7 @@ export default function CategoryPage() {
 
   return (
     <div className="category-page">
-      {category && (
+      {/* {category && (
         <div className="category-header" style={{ borderColor: category.color }}>
           <span className="category-badge" style={{ backgroundColor: category.color }}>
             {category.name}
@@ -45,7 +45,7 @@ export default function CategoryPage() {
           </span>
           {category.description && <p>{category.description}</p>}
         </div>
-      )}
+      )} */}
 
       {loading && page === 1 ? (
         <Spinner />

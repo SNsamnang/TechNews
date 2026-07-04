@@ -59,6 +59,7 @@ class CategoryController extends Controller
                 'slug'          => $post->slug,
                 'excerpt'       => $post->excerpt,
                 'thumbnail_url' => $post->thumbnail_url,  // ✅ accessor called here
+                'media_type' => $post->media_type,
                 'views'         => $post->views,
                 'published_ago' => $post->published_at?->diffForHumans(),
                 'published_at'  => $post->published_at?->format('Y-m-d H:i:s'),
