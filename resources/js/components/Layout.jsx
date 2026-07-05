@@ -89,8 +89,8 @@ function Navbar() {
             <div className="container">
                 <div className="navbar-top">
                     <Link to="/" className="logo">
-                        <span className="logo-main">CAMBO</span>
-                        <span className="logo-sub">REPORT</span>
+                        <span className="logo-main">ANACHAK</span>
+                        <span className="logo-sub">NEWS</span>
                     </Link>
 
                     <form className="search-form" onSubmit={handleSearch}>
@@ -182,36 +182,23 @@ function Footer() {
                 <div className="footer-grid">
                     <div>
                         <Link to="/" className="logo">
-                            <span className="logo-main">CAMBO</span>
-                            <span className="logo-sub">REPORT</span>
+                            <span className="logo-main">ANACHAK</span>
+                            <span className="logo-sub">NEWS</span>
                         </Link>
                         <p className="footer-desc">រក្សាគោលការណ៍ឯកជនភាព</p>
                         <p className="footer-desc1">អាស័យដ្ឋាន</p>
                         <p className="footer-desc">
                             📍 ផ្ទះលេខ៧៥ បុរីហុកឆេង មហាវិថីវេងស្រេង
-                            សង្កាត់ទួលពង្រ ​​​​​ ភ្នំពេញ កម្ពុជា
+                            សង្កាត់ទួលពង្រ ​​ភ្នំពេញ កម្ពុជា
                         </p>
                     </div>
                     <div>
                         <h3>អំពីយើង</h3>
-                        <ul>
-                            <li>
-                                <Link to="/" onClick={() => setMenuOpen(false)}>
-                                    ទំព័រដើម
-                                </Link>
-                            </li>
-                            {categories.map((cat) => (
-                                <li key={cat.id}>
-                                    <Link
-                                        to={`/category/${cat.slug}`}
-                                        style={{ "--cat-color": cat.color }}
-                                        onClick={() => setMenuOpen(false)}
-                                    >
-                                        {cat.name}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
+                        <p className="footer-desc">
+                            ANACHAK NEWS គឺជាគេហទំព័រព័ត៌មានអនឡាញ
+                            ដែលផ្តល់ព័ត៌មានថ្មីៗ ព័ត៌មានជាតិ និងអន្តរជាតិ
+                            ប្រកបដោយភាពត្រឹមត្រូវ និងទុកចិត្តបាន។
+                        </p>
                     </div>
                     <div className="all-icon">
                         <h3>ទំនាក់ទំនង</h3>
@@ -264,7 +251,7 @@ function Footer() {
                 </div>
                 <div className="footer-bottom">
                     <p>
-                        © រក្សាសិទ្ទគ្រប់គ្រងដោយ CAMBO{" "}
+                        © រក្សាសិទ្ទគ្រប់គ្រងដោយ ANACHAK{" "}
                         {new Date().getFullYear()}
                     </p>
                 </div>

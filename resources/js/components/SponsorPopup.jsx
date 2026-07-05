@@ -20,7 +20,7 @@ export default function SponsorPopup() {
                 // Show close button after 0.5 second
                 setTimeout(() => {
                     setShowCloseButton(true);
-                }, 5000);
+                }, 3000);
             }, 1000);
         });
     }, [location.pathname]);

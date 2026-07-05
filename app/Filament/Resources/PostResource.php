@@ -79,7 +79,7 @@ class PostResource extends Resource
                         ->required(),
 
                     Forms\Components\FileUpload::make('thumbnail')
-                        ->label('រូបភាព / វីដេអូ')
+                        ->label('រូបភាព / វីដេអូ (1080x600)')
                         ->directory('ads')
                         ->visible(
                             fn($get) =>

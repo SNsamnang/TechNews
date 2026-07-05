@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            $table->boolean('status')->default(1);
+            $table->string('url')->nullable()->after('video_url');
+            $table->string('position')->nullable()->after('url');
         });
     }
 
@@ -22,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('advertisements', function (Blueprint $table) {
-            //
+            $table->dropColumn(['url', 'position']);
         });
     }
 };

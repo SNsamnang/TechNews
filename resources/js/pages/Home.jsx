@@ -88,14 +88,15 @@ function FeaturedHero({ posts }) {
             {/* Thumbnail strip */}
             <div className="hero__strip">
                 {posts.map((p, i) => (
-                    <button
+                    <Link
                         key={p.id}
+                        to={`/post/${p.slug}`}
                         className={`hero__thumb ${i === active ? "active" : ""}`}
-                        onClick={() => setActive(i)}
+                        onMouseEnter={() => setActive(i)}
                     >
                         <img src={p.thumbnail_url} alt={p.title} />
                         <span>{p.title}</span>
-                    </button>
+                    </Link>
                 ))}
             </div>
         </div>
@@ -154,7 +155,9 @@ export default function Home() {
             {/* Hero */}
             <FeaturedHero posts={featured} />
             {/* Main content + Sidebar */}
-            <WeatherCalendar />
+            <div className="weather-containner">
+                <WeatherCalendar />
+            </div>
             <div className="home-grid">
                 {/* Latest news */}
                 <section className="latest-section">
@@ -196,4 +199,3 @@ export default function Home() {
         </div>
     );
 }
-

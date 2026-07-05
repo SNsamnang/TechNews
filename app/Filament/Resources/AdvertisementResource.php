@@ -80,18 +80,19 @@ class AdvertisementResource extends Resource
 
                 Forms\Components\TextInput::make('url')
                     ->label('លីងតំណ')
+                    ->url()
+                    ->nullable(),
+
+                Forms\Components\Select::make('position')
+                    ->label('ទីតាំង')
+                    ->options([
+                        'popup' => 'Popup',
+                        'homepage' => 'Homepage',
+                        'sidebar' => 'Sidebar',
+                    ])
                     ->required(),
 
-                // Forms\Components\Select::make('position')
-                //     ->label('ទីតាំង')
-                //     ->options([
-                //         'popup' => 'Popup',
-                //         'homepage' => 'Homepage',
-                //         'sidebar' => 'Sidebar',
-                //     ])
-                //     ->required(),
-
-                Forms\Components\Toggle::make('is_active')
+                Forms\Components\Toggle::make('status')
                     ->label('ដំណើរការ')
                     ->default(false)
                     ->required(),
@@ -108,11 +109,11 @@ class AdvertisementResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->label('ឈ្មោះប្រេន'),
 
-                // Tables\Columns\BadgeColumn::make('position')
-                //     ->label('ទីតាំង'),
+                Tables\Columns\BadgeColumn::make('position')
+                    ->label('ទីតាំង'),
 
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean()
+                Tables\Columns\ToggleColumn::make('status')
+                    ->default(true)
                     ->label('ដំណើរការ'),
             ])
             ->filters([
